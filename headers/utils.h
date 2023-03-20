@@ -4,7 +4,7 @@
 #include "./domain.h"
 #include "./repo.h"
 
-#define EPSILON 0.000000001
+
 
 typedef int(*compareMethod)(Cheltuiala*, Cheltuiala*); // pointer catre functie de comparare
 typedef ListaCheltuieli* (*filterMethod)(ListaCheltuieli*, void*); // pointer catre functie de filtrare

@@ -7,6 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define EPSILON 0.000000001
+
 
 // ENTITATEA
 

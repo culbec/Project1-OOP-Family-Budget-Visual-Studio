@@ -56,6 +56,8 @@ void setTip(Cheltuiala* cheltuiala, char* new_tip) {
 int eqCheltuieli(Cheltuiala* this, Cheltuiala* other) {
     if (this->ziua != other->ziua)
         return 0;
+    if (abs(this->suma - other->suma) > EPSILON)
+        return 0;
     if (strcmp(this->tip, other->tip) != 0)
         return 0;
     return 1;

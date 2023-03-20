@@ -30,10 +30,10 @@ int serviceAdaugaCheltuiala(ServiceCheltuieli* serviceCheltuieli, int ziua, doub
     if (validareObiect(cheltuiala, serviceCheltuieli->repoCheltuieli) == 2)
         rez = 2;
     
-    if(rez)
+    if(rez == 1)
         repoAdaugareCheltuiala(serviceCheltuieli->repoCheltuieli, cheltuiala);
-    
-    distrugeCheltuiala(cheltuiala);
+    else
+        distrugeCheltuiala(cheltuiala);
     return rez;
 }
 
@@ -68,8 +68,10 @@ int serviceStergeCheltuiala(ServiceCheltuieli* serviceCheltuieli, int ziua, doub
     int index = repoCautaCheltuiala(serviceCheltuieli->repoCheltuieli, cheltuiala);
     if (index == -1)
         rez = 0; // nu exista cheltuiala in lista ==> nu se poate sterge
-
-    repoStergeCheltuiala(serviceCheltuieli->repoCheltuieli, index);
+    
+    if(rez)
+        repoStergeCheltuiala(serviceCheltuieli->repoCheltuieli, index);
+    distrugeCheltuiala(cheltuiala);
     return rez;
 }
 

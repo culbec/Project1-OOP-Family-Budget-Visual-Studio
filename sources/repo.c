@@ -39,7 +39,7 @@ void repoRedimensionare(ListaCheltuieli* repoCheltuieli) {
 void repoAdaugareCheltuiala(ListaCheltuieli* repoCheltuieli, Cheltuiala* cheltuiala) {
     if (repoCheltuieli->lungime == repoCheltuieli->capacitate)
         repoRedimensionare(repoCheltuieli);
-    repoCheltuieli->cheltuieli[repoCheltuieli->lungime++] = copieCheltuiala(cheltuiala);
+    repoCheltuieli->cheltuieli[repoCheltuieli->lungime++] = cheltuiala;
 }
 
 void repoModificaCheltuiala(ListaCheltuieli* repoCheltuieli, int index, Cheltuiala* cheltuiala) {

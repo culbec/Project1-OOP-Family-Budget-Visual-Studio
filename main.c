@@ -2,7 +2,7 @@
 #include "./tests/tests.h"
 #include "./headers/ui.h"
 
-#define _CRTDBG_MAP_ALLOC
+//#define _CRTDBG_MAP_ALLOC
 
 int main() {
     test_domain();
@@ -12,8 +12,8 @@ int main() {
 
     printf("Test ok!\n");
 
-    //show_ui();
-    _CrtDumpMemoryLeaks();
+    //showUi();
+    //_CrtDumpMemoryLeaks();
 
     return 0;
 }
