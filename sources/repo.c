@@ -3,85 +3,78 @@
 //
 
 #include "../headers/repo.h"
+#include "../headers/utils.h"
 
-RepoCheltuieli creeaza_repo() {
-    /*
-     * Creeaza un repo de lungime 0
-     * @pre: -
-     * @post: repo de lungime 0
-     */
-    RepoCheltuieli repo_cheltuieli;
-    repo_cheltuieli.lungime = 0;
-    return repo_cheltuieli;
+ListaCheltuieli* creeazaRepo(unsigned int capacitate, unsigned int lungime) {
+    ListaCheltuieli* repoCheltuieli = (ListaCheltuieli*)malloc(sizeof(ListaCheltuieli));
+    if (repoCheltuieli) {
+        repoCheltuieli->capacitate = capacitate;
+        repoCheltuieli->lungime = lungime;
+        repoCheltuieli->cheltuieli = (Cheltuiala**)malloc(repoCheltuieli->capacitate * sizeof(Cheltuiala*));
+    }
+    return repoCheltuieli;
 }
 
-void distruge_repo(RepoCheltuieli* ptr_repo_cheltuieli) {
-    /*
-     * Distruge repo-ul
-     * @pre: ptr_repo_cheltuieli = pointer spre un repo_cheltuieli
-     * @post: lungimea repo-ului = 0
-     */
-    ptr_repo_cheltuieli->lungime = 0;
+void distrugeRepo(ListaCheltuieli* repoCheltuieli) {
+    for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
+        distrugeCheltuiala(repoCheltuieli->cheltuieli[i]);
+    free(repoCheltuieli->cheltuieli);
+    free(repoCheltuieli);
 }
 
-void repo_adaugare_cheltuiala(RepoCheltuieli* ptr_repo_cheltuieli, Cheltuiala cheltuiala) {
-    /*
-     * Adauga cheltuiala in lista repo-ului de cheltuieli
-     * @pre: ptr_repo_cheltuieli = pointer spre repo_cheltuieli; cheltuiala = Cheltuiala
-     * @post: cheltuiala este adaugata in lista de cheltuieli
-     */
-    ptr_repo_cheltuieli->cheltuieli[ptr_repo_cheltuieli->lungime++] = cheltuiala;
+void repoRedimensionare(ListaCheltuieli* repoCheltuieli) {
+    Cheltuiala** newCheltuieli = (Cheltuiala**)malloc(repoCheltuieli->capacitate * 2 * sizeof(Cheltuiala*));
+    if (newCheltuieli) {
+        for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
+            if(newCheltuieli[i])
+                newCheltuieli[i] = copieCheltuiala(repoCheltuieli->cheltuieli[i]);
+        for (int i = 0; i < repoCheltuieli->lungime; i++)
+            distrugeCheltuiala(repoCheltuieli->cheltuieli[i]);
+        free(repoCheltuieli->cheltuieli);
+        repoCheltuieli->cheltuieli = newCheltuieli;
+        repoCheltuieli->capacitate = repoCheltuieli->capacitate * 2;
+    }
 }
 
-void repo_modifica_cheltuiala(RepoCheltuieli* ptr_repo_cheltuieli, int index, Cheltuiala cheltuiala) {
-    /*
-     * Modifica cheltuiala de pe pozitia 'index' cu o alta cheltuiala
-     * @pre: ptr_repo_cheltuieli = pointer spre repo_cheltuieli; cheltuiala = Cheltuiala;
-     *       index = pozitia cheltuielii de modificat
-     * @post: cheltuiala de pe pozitia index = cheltuiala noua
-     */
-    ptr_repo_cheltuieli->cheltuieli[index] = cheltuiala;
+void repoAdaugareCheltuiala(ListaCheltuieli* repoCheltuieli, Cheltuiala* cheltuiala) {
+    if (repoCheltuieli->lungime == repoCheltuieli->capacitate)
+        repoRedimensionare(repoCheltuieli);
+    repoCheltuieli->cheltuieli[repoCheltuieli->lungime++] = copieCheltuiala(cheltuiala);
 }
 
-void repo_sterge_cheltuiala(RepoCheltuieli* ptr_repo_cheltuieli, int index) {
-    /*
-     * Sterge cheltuiala de pe pozitia index
-     * @pre: ptr_repo_cheltuieli = pointer spre repo_cheltuieli; index = pozitia cheltuielii de sters
-     * @post: cheltuiala de pe pozitia index este stearsa; lungime' = lungime - 1
-     */
-    for (int i = index; i < ptr_repo_cheltuieli->lungime - 1; i++)
-        ptr_repo_cheltuieli->cheltuieli[i] = ptr_repo_cheltuieli->cheltuieli[i + 1];
-    ptr_repo_cheltuieli->lungime--;
+void repoModificaCheltuiala(ListaCheltuieli* repoCheltuieli, int index, Cheltuiala* cheltuiala) {
+    distrugeCheltuiala(repoCheltuieli->cheltuieli[index]);
+    repoCheltuieli->cheltuieli[index] = copieCheltuiala(cheltuiala);
 }
 
-int repo_cauta_cheltuiala(RepoCheltuieli* ptr_repo_cheltuieli, Cheltuiala cheltuiala) {
-    /*
-     * Cauta o cheltuiala in lista de cheltuieli
-     * @pre: ptr_repo_cheltuieli = pointer spre un RepoCheltuieli; cheltuiala = Cheltuiala
-     * @post: index-ul in lista de cheltuieli a cheltuielii 'cheltuiala'
-     */
-    for (int i = 0; i < ptr_repo_cheltuieli->lungime; i++)
-        if (eq_cheltuieli(ptr_repo_cheltuieli->cheltuieli[i], cheltuiala) == 1)
+void repoStergeCheltuiala(ListaCheltuieli* repoCheltuieli, int index) {
+    for (unsigned int i = index; i < repoCheltuieli->lungime - 1; i++)
+        swap(repoCheltuieli->cheltuieli[i],repoCheltuieli->cheltuieli[i + 1]);
+    distrugeCheltuiala(repoCheltuieli->cheltuieli[repoCheltuieli->lungime - 1]);
+    repoCheltuieli->lungime--;
+}
+
+int repoCautaCheltuiala(ListaCheltuieli* repoCheltuieli, Cheltuiala* cheltuiala) {
+    for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
+        if (eqCheltuieli(repoCheltuieli->cheltuieli[i], cheltuiala) == 1)
             return i;
     return -1;
 }
 
 
-Cheltuiala* get_cheltuieli(RepoCheltuieli* ptr_repo_cheltuieli) {
-    /*
-     * Returneaza cheltuielile unui repo
-     * @pre: ptr_repo_cheltuieli = pointer catre RepoCheltuieli
-     * @post: cheltuielile acelui repo
-     */
-    return ptr_repo_cheltuieli->cheltuieli;
+Cheltuiala** getCheltuieli(ListaCheltuieli* repoCheltuieli) {
+    return repoCheltuieli->cheltuieli;
 }
 
-unsigned int get_lungime(RepoCheltuieli* ptr_repo_cheltuieli) {
-    /*
-     * Returneaza lungimea listei de cheltuieli a unui repo
-     * @pre: ptr_repo_cheltuieli = pointer catre RepoCheltuieli
-     * @post: lungimea cheltuielilor aceului repo
-     */
-    return ptr_repo_cheltuieli->lungime;
+unsigned int getLungime(ListaCheltuieli* repoCheltuieli) {
+    return repoCheltuieli->lungime;
 }
 
+ListaCheltuieli* copieListaCheltuieli(ListaCheltuieli* repoCheltuieli) {
+    ListaCheltuieli* copieLista = creeazaRepo(repoCheltuieli->capacitate, repoCheltuieli->lungime);
+    if (copieLista) {
+        for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
+            copieLista->cheltuieli[i] = copieCheltuiala(repoCheltuieli->cheltuieli[i]);
+        return copieLista;
+    }
+}

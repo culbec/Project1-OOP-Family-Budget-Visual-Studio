@@ -2,33 +2,103 @@
 // Created by culbec on 3/12/23.
 //
 
-#ifndef LAB2_4_OOP_DOMAIN_H
-#define LAB2_4_OOP_DOMAIN_H
+#pragma once
+
+#include <string.h>
+#include <stdlib.h>
+
+
+// ENTITATEA
 
 typedef struct {
-    int ziua; // ziua in care s-a facut cheltuiala
-    double suma; // suma cheltuielii efectuate
-    char tip[100]; // tipul unei cheltuieli: 
-                   //mancare, transport, telefon&internet, imbracaminte, altele
+    int ziua;      // ziua in care s-a facut cheltuiala
+    double suma;   // suma cheltuielii efectuate
+    char* tip;      // tipul unei cheltuieli: 
+                    //mancare, transport, telefon&internet, imbracaminte, altele
 }Cheltuiala;
 
-// 'constructor' + 'destructor'
-Cheltuiala creeaza_cheltuiala(int, double, char*);
+    /*
+     * Creeaza o cheltuiala
+     * @pre: int, double, char* = ziua, suma, tipul
+     * @post: se creeaza cheltuiala cu proprietatile specificate
+     * ! also: se poate ca cheltuiala sa nu se poata creea
+     *         astfel, se va indica acest lucru
+     */
+Cheltuiala* creeazaCheltuiala(int, double, char*);
 
-void distruge_cheltuiala(Cheltuiala*);
+    /*
+     * 'Distruge' cheltuiala
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     * @post: se distruge cheltuiala
+     */
 
-// definim getters + setters
+void distrugeCheltuiala(Cheltuiala*);
 
-int get_ziua(Cheltuiala*);
-void set_ziua(Cheltuiala*, int);
+    /*
+     * Returneaza ziua pentru o cheltuiala specificata
+     *
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     * @post: ziua in care s-a efectuat cheltuiala
+    */
+int getZiua(Cheltuiala*);
 
-double get_suma(Cheltuiala*);
-void set_suma(Cheltuiala*, double);
+    /*
+     * Seteaza ziua pentru o cheltuiala
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     *       int = ziua ce va fi atribuita cheltuielii
+     * @post: cheltuiala va avea ziua specificata
+     */
 
-char* get_tip(Cheltuiala*);
-void set_tip(Cheltuiala*, char*);
+void setZiua(Cheltuiala*, int);
 
-// functie pentru verificarea daca doua structuri sunt echivalente
-int eq_cheltuieli(Cheltuiala, Cheltuiala);
+    /*
+     * Returneaza suma pentru o cheltuiala specificata
+     *
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     * @post: suma in care s-a efectuat cheltuiala
+    */
 
-#endif //LAB2_4_OOP_DOMAIN_H
+double getSuma(Cheltuiala*);
+
+    /*
+     * Seteaza ziua pentru o cheltuiala
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     *       double = suma ce va fi atribuita cheltuielii
+     * @post: cheltuiala va avea suma specificata
+     */
+
+void setSuma(Cheltuiala*, double);
+
+    /*
+     * Returneaza tipul pentru o cheltuiala specificata
+     *
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     * @post: suma in care s-a efectuat cheltuiala
+    */
+
+char* getTip(Cheltuiala*);
+
+    /*
+     * Seteaza tipul pentru o cheltuiala
+     * @pre: Cheltuiala* = indica o cheltuiala valida
+     *       char* = tipul ce va fi atribuit cheltuielii
+     * @post: cheltuiala va avea tipul specificat
+     */
+
+void setTip(Cheltuiala*, char*);
+
+    /*
+     * Verifica daca doua cheltuieli sunt echivalente
+     * @pre: Cheltuiala*, Cheltuiala* = indica doua cheltuieli valide
+     * @post: rezultatul verificarii echivalentei
+     */
+
+int eqCheltuieli(Cheltuiala*, Cheltuiala*);
+
+    /*
+     * Copiaza cheltuiala
+     * @pre: Cheltuiala* refera o cheltuiala valida
+     * @post: copia cheltuielii
+    */
+
+Cheltuiala* copieCheltuiala(Cheltuiala*);

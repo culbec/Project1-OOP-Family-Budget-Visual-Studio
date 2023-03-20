@@ -12,219 +12,236 @@
 
 void test_domain() {
     // cheltuiala pe care vom lucra
-    Cheltuiala cheltuiala = creeaza_cheltuiala(13, 123.4, "mancare");
+    Cheltuiala* cheltuiala = creeazaCheltuiala(13, 123.4, "mancare");
 
     // testam gettere pt aceasta cheltuiala
-    assert(get_ziua(&cheltuiala) == 13);
-    assert(get_suma(&cheltuiala) == 123.4);
-    assert(strcmp(get_tip(&cheltuiala), "mancare") == 0);
+    assert(getZiua(cheltuiala) == 13);
+    assert(getSuma(cheltuiala) == 123.4);
+    assert(strcmp(getTip(cheltuiala), "mancare") == 0);
 
     // setam parametrii la alte valori si dupa verificam cu gettere daca s-au setat
-    set_ziua(&cheltuiala, 14);
-    set_suma(&cheltuiala, 13.1);
-    set_tip(&cheltuiala, "altele");
+    setZiua(cheltuiala, 14);
+    setSuma(cheltuiala, 13.1);
+    setTip(cheltuiala, "altele");
 
-    assert(get_ziua(&cheltuiala) == 14);
-    assert(get_suma(&cheltuiala) == 13.1);
-    assert(strcmp(get_tip(&cheltuiala), "altele") == 0);
+    assert(getZiua(cheltuiala) == 14);
+    assert(getSuma(cheltuiala) == 13.1);
+    assert(strcmp(getTip(cheltuiala), "altele") == 0);
 
     // verificam daca 2 cheltuieli sunt echivalente
-    Cheltuiala cheltuiala_echiv = creeaza_cheltuiala(14, 13.1, "altele");
-    assert(eq_cheltuieli(cheltuiala, cheltuiala_echiv) == 1);
+    Cheltuiala* cheltuiala_echiv = creeazaCheltuiala(14, 13.1, "altele");
+    assert(eqCheltuieli(cheltuiala, cheltuiala_echiv) == 1);
 
     // verificam si ca acest lucru nu este adevarat pentru o cheltuiala neechivalenta
-    Cheltuiala cheltuiala_neechiv1 = creeaza_cheltuiala(13, 13.1, "altele");
-    Cheltuiala cheltuiala_neechiv2 = creeaza_cheltuiala(14, 11.2, "altele");
-    Cheltuiala cheltuiala_neechiv3 = creeaza_cheltuiala(14, 13.1, "mancare");
-    Cheltuiala cheltuiala_neechiv4 = creeaza_cheltuiala(2, 0.5, "imbracaminte");
+    Cheltuiala* cheltuiala_neechiv1 = creeazaCheltuiala(13, 13.1, "altele");
+    Cheltuiala* cheltuiala_neechiv2 = creeazaCheltuiala(14, 13.1, "mancare");
+    Cheltuiala* cheltuiala_neechiv3 = creeazaCheltuiala(2, 0.5, "imbracaminte");
 
-    assert(eq_cheltuieli(cheltuiala, cheltuiala_neechiv1) == 0);
-    assert(eq_cheltuieli(cheltuiala, cheltuiala_neechiv2) == 0);
-    assert(eq_cheltuieli(cheltuiala, cheltuiala_neechiv3) == 0);
-    assert(eq_cheltuieli(cheltuiala, cheltuiala_neechiv4) == 0);
+    assert(eqCheltuieli(cheltuiala, cheltuiala_neechiv1) == 0);
+    assert(eqCheltuieli(cheltuiala, cheltuiala_neechiv2) == 0);
+    assert(eqCheltuieli(cheltuiala, cheltuiala_neechiv3) == 0);
 
+    // copiem cheltuiala si verificam daca e aceeasi
+    Cheltuiala* cheltuiala_copie = copieCheltuiala(cheltuiala);
+    assert(eqCheltuieli(cheltuiala, cheltuiala_copie) == 1);
+    
     // distrugem cheltuiala si verificam daca e distrusa
-    distruge_cheltuiala(&cheltuiala);
+    distrugeCheltuiala(cheltuiala);
+    //assert(cheltuiala->tip == NULL);
 
-    assert(get_ziua(&cheltuiala) == -1);
-    assert(get_suma(&cheltuiala) == -1);
-    assert(strcmp(get_tip(&cheltuiala), "") == 0);
+    // distrugem si restul cheltuielilor
+    distrugeCheltuiala(cheltuiala_echiv);
+    distrugeCheltuiala(cheltuiala_neechiv1);
+    distrugeCheltuiala(cheltuiala_neechiv2);
+    distrugeCheltuiala(cheltuiala_neechiv3);
+    distrugeCheltuiala(cheltuiala_copie);
 }
 
 void test_repo() {
     // repo-ul de cheltuieli
-    RepoCheltuieli repoCheltuieli = creeaza_repo();
-    assert(sizeof(repoCheltuieli) == sizeof(RepoCheltuieli));
+    ListaCheltuieli* repoCheltuieli = creeazaRepo(1, 0);
+
+    // verificam daca s-a creat cum trebuie
+    assert(repoCheltuieli->capacitate == 1);
+    assert(repoCheltuieli->lungime == 0);
+    assert(repoCheltuieli->cheltuieli != NULL);
+
+    // verificam daca functioneaza redimensionarea
+    int capacitateOld = repoCheltuieli->capacitate;
+
+    repoRedimensionare(repoCheltuieli);
+
+    assert(repoCheltuieli->capacitate == capacitateOld * 2);
 
     // initializam cateva cheltuieli
-    Cheltuiala cheltuiala1, cheltuiala2, cheltuiala3;
-    cheltuiala1 = creeaza_cheltuiala(16, 23.5, "mancare");
-    cheltuiala2 = creeaza_cheltuiala(2, 167.8, "altele");
-    cheltuiala3 = creeaza_cheltuiala(31, 123.2, "imbracaminte");
-
-    // verificam daca s-a initializat corect repo-ul
-    assert(get_lungime(&repoCheltuieli) == 0);
+    Cheltuiala* cheltuiala1 = creeazaCheltuiala(16, 23.5, "mancare");
+    Cheltuiala* cheltuiala2 = creeazaCheltuiala(2, 167.8, "altele");
+    Cheltuiala* cheltuiala3 = creeazaCheltuiala(31, 123.2, "imbracaminte");
 
     // adaugam cheltuielile pe parcurs si  verificam daca se actualizeaza lungimea
-    repo_adaugare_cheltuiala(&repoCheltuieli, cheltuiala1);
-    assert(get_lungime(&repoCheltuieli) == 1);
+    repoAdaugareCheltuiala(repoCheltuieli, cheltuiala1);
+    assert(getLungime(repoCheltuieli) == 1);
 
-    repo_adaugare_cheltuiala(&repoCheltuieli, cheltuiala2);
-    repo_adaugare_cheltuiala(&repoCheltuieli, cheltuiala3);
-    assert(get_lungime(&repoCheltuieli) == 3);
+    repoAdaugareCheltuiala(repoCheltuieli, cheltuiala2);
+    repoAdaugareCheltuiala(repoCheltuieli, cheltuiala3);
+    assert(getLungime(repoCheltuieli) == 3);
 
     // cautam o cheltuiala
-    assert(repo_cauta_cheltuiala(&repoCheltuieli, cheltuiala1) == 0);
-    assert(repo_cauta_cheltuiala(&repoCheltuieli, cheltuiala2) == 1);
+    cheltuiala1 = repoCheltuieli->cheltuieli[0];
+    cheltuiala2 = repoCheltuieli->cheltuieli[1];
+    assert(repoCautaCheltuiala(repoCheltuieli, cheltuiala1) == 0);
+    assert(repoCautaCheltuiala(repoCheltuieli, cheltuiala2) == 1);
+
+    // verificam cautarea si pentru o cheltuiala neexistenta in lista de cheltuieli
+    Cheltuiala* cheltuialaNeexistenta = creeazaCheltuiala(11, 0.5, "mancare");
+    assert(repoCautaCheltuiala(repoCheltuieli, cheltuialaNeexistenta) == -1);
+    distrugeCheltuiala(cheltuialaNeexistenta);
 
     // cream o cheltuiala de modificat
-    Cheltuiala cheltuiala_modif = creeaza_cheltuiala(6, 56.78, "transport");
-    assert(repo_cauta_cheltuiala(&repoCheltuieli, cheltuiala_modif) == -1);
-
-    repo_modifica_cheltuiala(&repoCheltuieli, 0, cheltuiala_modif);
-    assert(eq_cheltuieli(repoCheltuieli.cheltuieli[0], cheltuiala_modif) == 1);
+    Cheltuiala* cheltuialaModif = creeazaCheltuiala(6, 56.78, "transport");
+    repoModificaCheltuiala(repoCheltuieli, 0, cheltuialaModif);
+    assert(eqCheltuieli(repoCheltuieli->cheltuieli[0], cheltuialaModif) == 1);
+    distrugeCheltuiala(cheltuialaModif);
 
     // verificam getter-ul pentru lista de cheltuieli
-    assert(get_cheltuieli(&repoCheltuieli) == repoCheltuieli.cheltuieli);
+    assert(getCheltuieli(repoCheltuieli) == repoCheltuieli->cheltuieli);
 
     // stergem o cheltuiala
-    unsigned int lungime = get_lungime(&repoCheltuieli);
-    repo_sterge_cheltuiala(&repoCheltuieli, 1);
-    assert(lungime == get_lungime(&repoCheltuieli) + 1);
+    unsigned int lungime = getLungime(repoCheltuieli);
+    repoStergeCheltuiala(repoCheltuieli, 1);
+    assert(lungime == getLungime(repoCheltuieli) + 1);
 
-    // distrugem repo-ul si verificam daca s-a distrus
-    distruge_repo(&repoCheltuieli);
-    assert(get_lungime(&repoCheltuieli) == 0);
+    // testam copierea
+    ListaCheltuieli* copieCheltuieli = copieListaCheltuieli(repoCheltuieli);
+    assert(copieCheltuieli->lungime == repoCheltuieli->lungime);
+    assert(copieCheltuieli->capacitate == repoCheltuieli->capacitate);
+    for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
+        assert(eqCheltuieli(copieCheltuieli->cheltuieli[i], repoCheltuieli->cheltuieli[i]));
+
+    // distrugem copia
+    distrugeRepo(copieCheltuieli);
+
+    // distrugem repo-ul
+    distrugeRepo(repoCheltuieli);
 }
 
 void test_validator() {
     // cream niste cheltuieli pentru a le putea valida
-    Cheltuiala cheltuiala_valida, cheltuiala_invalida1, cheltuiala_invalida2,
-        cheltuiala_invalida3, cheltuiala_invalida4;
-    cheltuiala_valida = creeaza_cheltuiala(13, 15.6, "mancare");
-    cheltuiala_invalida1 = creeaza_cheltuiala(-1, 15.4, "altele");
-    cheltuiala_invalida2 = creeaza_cheltuiala(32, 16.7, "imbracaminte");
-    cheltuiala_invalida3 = creeaza_cheltuiala(16, -1.35, "int");
-    cheltuiala_invalida4 = creeaza_cheltuiala(27, 27.1, "telf");
+    Cheltuiala* cheltuialaValida    = creeazaCheltuiala(13, 15.6, "mancare");
+    Cheltuiala* cheltuialaInvalida1 = creeazaCheltuiala(-1, 15.4, "altele");
+    Cheltuiala* cheltuialaInvalida2 = creeazaCheltuiala(32, 16.7, "imbracaminte");
+    Cheltuiala* cheltuialaInvalida3 = creeazaCheltuiala(16, -1.35, "int");
+    Cheltuiala* cheltuialaInvalida4 = creeazaCheltuiala(27, 27.1, "telf");
 
     // initializem un repo de cheltuieli
-    RepoCheltuieli repoCheltuieli = creeaza_repo();
+    ListaCheltuieli* repoCheltuieli = creeazaRepo(1, 0);
 
     // validam cheltuielile
-    assert(validare_obiect(&cheltuiala_valida, &repoCheltuieli) == 1);
-    assert(validare_obiect(&cheltuiala_invalida1, &repoCheltuieli) == 0);
-    assert(validare_obiect(&cheltuiala_invalida2, &repoCheltuieli) == 0);
-    assert(validare_obiect(&cheltuiala_invalida3, &repoCheltuieli) == 0);
-    assert(validare_obiect(&cheltuiala_invalida4, &repoCheltuieli) == 0);
+    assert(validareObiect(cheltuialaValida, repoCheltuieli) == 1);
+    assert(validareObiect(cheltuialaInvalida1, repoCheltuieli) == 0);
+    assert(validareObiect(cheltuialaInvalida2, repoCheltuieli) == 0);
+    assert(validareObiect(cheltuialaInvalida3, repoCheltuieli) == 0);
+    assert(validareObiect(cheltuialaInvalida4, repoCheltuieli) == 0);
 
     // adaugam cheltuiala valida pentru a valida si cautarea
-    repo_adaugare_cheltuiala(&repoCheltuieli, cheltuiala_valida);
+    repoAdaugareCheltuiala(repoCheltuieli, cheltuialaValida);
     // verificam daca functioneaza cautarea
-    assert(validare_obiect(&cheltuiala_valida, &repoCheltuieli) == 2);
+    assert(validareObiect(cheltuialaValida, repoCheltuieli) == 2);
+
+    // distrugem repo-ul si cheltuielile;
+    distrugeRepo(repoCheltuieli);
+    //distrugeCheltuiala(cheltuialaValida);
+    distrugeCheltuiala(cheltuialaInvalida1);
+    distrugeCheltuiala(cheltuialaInvalida2);
+    distrugeCheltuiala(cheltuialaInvalida3);
+    distrugeCheltuiala(cheltuialaInvalida4);
 }
 
 void test_service() {
-    // initializam service-ul + repo-ul
-    ServiceCheltuieli serviceCheltuieli = creeaza_service_cheltuieli();
-    assert(sizeof(serviceCheltuieli) == sizeof(ServiceCheltuieli));
+    // initializam un service si testam daca s-a initializat cum trebuie
+    ServiceCheltuieli* serviceCheltuieli = creeazaServiceCheltuieli();
+    assert(serviceCheltuieli->repoCheltuieli->capacitate == 1);
+    assert(serviceCheltuieli->repoCheltuieli->lungime == 0);
 
-    // verificam daca s-a creat repo-ul
-    assert(get_lungime(&serviceCheltuieli.repoCheltuieli) == 0);
+    // adaugam o cheltuiala
+    // verificam si cu cheltuieli valide, invalide si existente
+    assert(serviceAdaugaCheltuiala(serviceCheltuieli, 13, 12.4, "mancare") == 1);
+    assert(serviceAdaugaCheltuiala(serviceCheltuieli, 13, 12.4, "mancare") == 2);
+    assert(serviceAdaugaCheltuiala(serviceCheltuieli, -1, 16, "altele") == 0);
 
-    // incercam sa adaugam din cheltuieli + verificam daca cheltuielile eronate nu se adauga
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, 13, 13.4, "mancare") == 1);
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, -1, -1, "internet") == 0);
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, 14, -12.1, "altele") == 0);
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, 28, 14.5, "manca") == 0);
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, 16, 16.7, "imbracaminte") == 1);
-    assert(service_adauga_cheltuiala(&serviceCheltuieli, 13, 13.4, "mancare") == 2);
+    // verificam modificarea pentru o cheltuiala
+    // incercam si cu parametrii valizi si cu cei invalizi
+    assert(serviceModificaCheltuiala(serviceCheltuieli, 13, 12.4, "mancare", 11, 2000.1, "altele") == 1);
+    assert(serviceModificaCheltuiala(serviceCheltuieli, 12, 11, "imbracaminte", 9, -11, "alt") == 0);
+    assert(serviceModificaCheltuiala(serviceCheltuieli, -11, 16.8, "altele", 18, 10, "telefon&internet") == 0);
+    assert(serviceModificaCheltuiala(serviceCheltuieli, 11, 2000.1, "altele", 19, -2, "altele") == 0);
+    assert(serviceModificaCheltuiala(serviceCheltuieli, 11, 2000.1, "altele", 11, 2000.1, "altele") == 0);
 
-    // verificam daca se modifica cheltuieli
-    assert(service_modifica_cheltuiala(&serviceCheltuieli, 13, 13.4, "mancare", 2, 22.3, "altele") == 1);
-    assert(service_modifica_cheltuiala(&serviceCheltuieli, 13, 13.4, "mancare", -1, 22.1, "manca") == 0);
+    // stergem o cheltuiala
+    // incercam si cu cea existenta si cu una neexistenta
+    assert(serviceStergeCheltuiala(serviceCheltuieli, 11, 2000.1, "altele") == 1);
+    assert(serviceStergeCheltuiala(serviceCheltuieli, 20, 19.3, "mancare") == 0);
 
-    // verificam daca se sterg cheltuieli
-    assert(service_sterge_cheltuiala(&serviceCheltuieli, 2, 22.3, "altele") == 1);
-    assert(service_sterge_cheltuiala(&serviceCheltuieli, 13, 13.4, "mancare") == 0);
+    // adaugam cateva cheltuieli pentru filtrare si sortare
+    serviceAdaugaCheltuiala(serviceCheltuieli, 17, 964, "mancare");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 11, 1084, "telefon&internet");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 11, 1946, "imbracaminte");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 16, 964, "mancare");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 22, 709, "telefon&internet");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 28, 488, "mancare");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 2, 1655, "transport");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 2, 975, "mancare");
+    serviceAdaugaCheltuiala(serviceCheltuieli, 19, 922, "mancare");
 
-    // initializam o lista de cheltuieli
-    ListaCheltuieli listaCheltuieli = creeaza_lista_cheltuieli();
+    char tip[] = "mancare";
+    ListaCheltuieli* filteredList = filtrare(serviceCheltuieli->repoCheltuieli, tip, "tip", compareTip);
+    assert(filteredList->lungime == 5);
+    distrugeRepo(filteredList);
 
-    // filtram dupa zi
-    filtrare_zi(&serviceCheltuieli, &listaCheltuieli, 16);
-    assert(lista_get_lungime(&listaCheltuieli) == 1);
+    int ziua = 11;
+    filteredList = filtrare(serviceCheltuieli->repoCheltuieli, &ziua, "zi", compareZi);
+    assert(filteredList->lungime == 2);
+    distrugeRepo(filteredList);
 
-    // filtram dupa suma
-    lista_set_lungime(&listaCheltuieli, 0);
-    filtrare_suma(&serviceCheltuieli, &listaCheltuieli, 16.7);
-    assert(lista_get_lungime(&listaCheltuieli) == 1);
+    double suma = 964;
+    filteredList = filtrare(serviceCheltuieli->repoCheltuieli, &suma, "suma", compareSuma);
+    assert(filteredList->lungime == 2);
+    distrugeRepo(filteredList);
 
-    // filtram dupa tip
-    lista_set_lungime(&listaCheltuieli, 0);
-    service_adauga_cheltuiala(&serviceCheltuieli, 13, 13.4, "imbracaminte");
-    filtrare_tip(&serviceCheltuieli, &listaCheltuieli, "imbracaminte");
-    assert(lista_get_lungime(&listaCheltuieli) == 2);
+    // verificam si ordonarea - crescator si descrescator
+    ListaCheltuieli* ordonareCrescatorZi = copieListaCheltuieli(serviceCheltuieli->repoCheltuieli);
+    ListaCheltuieli* ordonareDescrescatorZi = copieListaCheltuieli(serviceCheltuieli->repoCheltuieli);
+    ListaCheltuieli* ordonareCrescatorTip = copieListaCheltuieli(serviceCheltuieli->repoCheltuieli);
+    ListaCheltuieli* ordonareDescrescatorTip = copieListaCheltuieli(serviceCheltuieli->repoCheltuieli);
 
-    // TESTE SORTARE
+    int pozitieUltim = getLungime(ordonareCrescatorZi) - 1;
 
-    // alta verificare pt. ordonare
-    serviceCheltuieli = creeaza_service_cheltuieli();
-    Cheltuiala chelt1, chelt2, chelt3, chelt4;
-    chelt1 = creeaza_cheltuiala(2, 15.6, "imbracaminte");
-    chelt2 = creeaza_cheltuiala(16, 200.3, "altele");
-    chelt3 = creeaza_cheltuiala(30, 1000.4, "telefon&internet");
-    chelt4 = creeaza_cheltuiala(1, 2.3, "mancare");
-    service_adauga_cheltuiala(&serviceCheltuieli, 2, 15.6, "imbracaminte");
-    service_adauga_cheltuiala(&serviceCheltuieli, 16, 200.3, "altele");
-    service_adauga_cheltuiala(&serviceCheltuieli, 30, 1000.4, "telefon&internet");
-    service_adauga_cheltuiala(&serviceCheltuieli, 1, 2.3, "mancare");
+    // sortam crescator dupa zi
+    sortare(ordonareCrescatorZi, "zi", false);
+    assert(eqCheltuieli(ordonareCrescatorZi->cheltuieli[0], serviceCheltuieli->repoCheltuieli->cheltuieli[6]) == 1);
+    assert(eqCheltuieli(ordonareCrescatorZi->cheltuieli[pozitieUltim], serviceCheltuieli->repoCheltuieli->cheltuieli[5]) == 1);
 
-    // ordonare dupa zi crescator
-    lista_set_lungime(&listaCheltuieli, 0);
-    ordonare(&serviceCheltuieli, &listaCheltuieli, 1, 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[0], chelt4) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[1], chelt1) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[2], chelt2) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[3], chelt3) == 1);
+    //sortam descrescator dupa zi
+    sortare(ordonareDescrescatorZi, "zi", true);
+    assert(eqCheltuieli(ordonareDescrescatorZi->cheltuieli[0], serviceCheltuieli->repoCheltuieli->cheltuieli[5]) == 1);
+    assert(eqCheltuieli(ordonareDescrescatorZi->cheltuieli[pozitieUltim], serviceCheltuieli->repoCheltuieli->cheltuieli[6]) == 1);
 
-    // ordonare dupa zi descrescator
-    lista_set_lungime(&listaCheltuieli, 0);
-    ordonare(&serviceCheltuieli, &listaCheltuieli, 1, 2);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[0], chelt3) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[1], chelt2) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[2], chelt1) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[3], chelt4) == 1);
+    // sortam crescator dupa tip
+    sortare(ordonareCrescatorTip, "tip", false);
+    assert(eqCheltuieli(ordonareCrescatorTip->cheltuieli[0], serviceCheltuieli->repoCheltuieli->cheltuieli[2]) == 1);
+    assert(eqCheltuieli(ordonareCrescatorTip->cheltuieli[pozitieUltim], serviceCheltuieli->repoCheltuieli->cheltuieli[6]) == 1);
 
-    // ordonare dupa tip crescator
-    lista_set_lungime(&listaCheltuieli, 0);
-    ordonare(&serviceCheltuieli, &listaCheltuieli, 2, 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[0], chelt2) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[1], chelt1) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[2], chelt4) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[3], chelt3) == 1);
+    // sortam descrescator dupa tip
+    sortare(ordonareDescrescatorTip, "tip", true);
+    assert(eqCheltuieli(ordonareDescrescatorTip->cheltuieli[0], serviceCheltuieli->repoCheltuieli->cheltuieli[6]) == 1);
+    assert(eqCheltuieli(ordonareDescrescatorTip->cheltuieli[pozitieUltim], serviceCheltuieli->repoCheltuieli->cheltuieli[2]) == 1);
 
-    // ordonare dupa tip descrescator
-    lista_set_lungime(&listaCheltuieli, 0);
-    ordonare(&serviceCheltuieli, &listaCheltuieli, 2, 2);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[0], chelt3) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[1], chelt4) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[2], chelt1) == 1);
-    assert(eq_cheltuieli(listaCheltuieli.cheltuieli[3], chelt2) == 1);
+    // distrugem toate listele create
+    distrugeRepo(ordonareCrescatorZi);
+    distrugeRepo(ordonareDescrescatorZi);
+    distrugeRepo(ordonareCrescatorTip);
+    distrugeRepo(ordonareDescrescatorTip);
 
-    // distrugem service-ul si verificam daca s-a distrus
-    distruge_service_cheltuieli(&serviceCheltuieli);
-    assert(get_lungime(&serviceCheltuieli.repoCheltuieli) == 0);
-
-    // verificam functia de swap
-    Cheltuiala chelt_swp1, chelt_swp2;
-    chelt_swp1 = creeaza_cheltuiala(5, 14.3, "mancare");
-    chelt_swp2 = creeaza_cheltuiala(7, 199.3, "altele");
-
-    Cheltuiala chelt_swp1_cp = chelt_swp1, chelt_swp2_cp = chelt_swp2;
-    swap(&chelt_swp1, &chelt_swp2);
-    assert(eq_cheltuieli(chelt_swp1, chelt_swp2_cp) == 1 && eq_cheltuieli(chelt_swp2, chelt_swp1_cp) == 1);
-
-    // verificam daca se distruge lista de cheltuieli
-    distruge_lista_cheltuieli(&listaCheltuieli);
-    assert(lista_get_lungime(&listaCheltuieli) == 0);
+    // distrugem si service-ul
+    distrugeServiceCheltuieli(serviceCheltuieli);
 }
