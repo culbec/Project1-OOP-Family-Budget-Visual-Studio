@@ -31,7 +31,7 @@ void distrugeRepo(ListaCheltuieli*);
      * @post: repo-ul va fi extins
      */
 
-void repoRedimensionare(ListaCheltuieli**);
+void repoRedimensionare(ListaCheltuieli*);
 
     /*
      * Adauga cheltuiala lista de cheltuieli a repo-ului

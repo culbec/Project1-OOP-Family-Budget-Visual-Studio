@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <crtdbg.h>
 #include "./tests/tests.h"
 #include "./headers/ui.h"
 
@@ -12,8 +13,10 @@ int main() {
 
     printf("Test ok!\n");
 
-    //showUi();
-    //_CrtDumpMemoryLeaks();
+    showUi();
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    _CrtDumpMemoryLeaks();
+
 
     return 0;
 }

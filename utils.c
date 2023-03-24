@@ -25,9 +25,13 @@ int compareTip(Cheltuiala* this, Cheltuiala* other) {
 }
 
 int compareSuma(Cheltuiala* this, Cheltuiala* other) {
-	if (abs(this->suma - other->suma) < EPSILON)
+	double dif = this->suma - other->suma;
+	double mod = dif;
+	if (dif < 0)
+		mod = -dif;
+	if (mod < EPSILON)
 		return 0;
-	if (this->suma - other->suma > 0)
+	if (dif> 0)
 		return 1;
 	return -1;
 }

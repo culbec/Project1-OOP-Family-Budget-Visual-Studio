@@ -23,16 +23,16 @@ void distrugeRepo(ListaCheltuieli* repoCheltuieli) {
 }
 
 void repoRedimensionare(ListaCheltuieli* repoCheltuieli) {
-    Cheltuiala** newCheltuieli = (Cheltuiala**)malloc(repoCheltuieli->capacitate * 2 * sizeof(Cheltuiala*));
-    if (newCheltuieli) {
+    unsigned int capacitateNew = repoCheltuieli->capacitate * 2;
+    Cheltuiala** newCheltuieli = (Cheltuiala**)malloc(capacitateNew * sizeof(Cheltuiala*));
+    if (newCheltuieli != NULL) {
         for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
-            if(newCheltuieli[i])
                 newCheltuieli[i] = copieCheltuiala(repoCheltuieli->cheltuieli[i]);
-        for (int i = 0; i < repoCheltuieli->lungime; i++)
+        for (unsigned int i = 0; i < repoCheltuieli->lungime; i++)
             distrugeCheltuiala(repoCheltuieli->cheltuieli[i]);
         free(repoCheltuieli->cheltuieli);
         repoCheltuieli->cheltuieli = newCheltuieli;
-        repoCheltuieli->capacitate = repoCheltuieli->capacitate * 2;
+        repoCheltuieli->capacitate = capacitateNew;
     }
 }
 
@@ -49,7 +49,7 @@ void repoModificaCheltuiala(ListaCheltuieli* repoCheltuieli, int index, Cheltuia
 
 void repoStergeCheltuiala(ListaCheltuieli* repoCheltuieli, int index) {
     for (unsigned int i = index; i < repoCheltuieli->lungime - 1; i++)
-        swap(repoCheltuieli->cheltuieli[i],repoCheltuieli->cheltuieli[i + 1]);
+        swap(&repoCheltuieli->cheltuieli[i], &repoCheltuieli->cheltuieli[i + 1]);
     distrugeCheltuiala(repoCheltuieli->cheltuieli[repoCheltuieli->lungime - 1]);
     repoCheltuieli->lungime--;
 }
@@ -77,4 +77,5 @@ ListaCheltuieli* copieListaCheltuieli(ListaCheltuieli* repoCheltuieli) {
             copieLista->cheltuieli[i] = copieCheltuiala(repoCheltuieli->cheltuieli[i]);
         return copieLista;
     }
+    return NULL;
 }

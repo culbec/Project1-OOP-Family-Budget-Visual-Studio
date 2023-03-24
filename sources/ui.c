@@ -113,9 +113,9 @@ void uiStergeCheltuiala(UI* ui) {
 
 void uiFiltrare(UI* ui) {
     ListaCheltuieli* listaCheltuieli = NULL;
-    char whatFilter[5];
+    char whatFilter[6];
     printf("\nDupa ce doriti sa filtrati? Tastati 'zi', 'suma' sau 'tip': ");
-    scanf_s("%s", whatFilter, 4);
+    scanf_s("%s", whatFilter, 5);
     whatFilter[strlen(whatFilter)] = '\0';
     if (strcmp(whatFilter, "zi") == 0) {
         int ziua;
@@ -184,6 +184,9 @@ void uiOrdonare(UI* ui) {
 
 void showUi() {
     UI* ui = creeazaUi();
+    printf("###################################################\n\n");
+    printf("\t\t BUGET DE FAMILIE \t\t");
+    printf("\n\n###################################################\n");
     while (1) {
         printf("\nOptiuni: \n 0. Afiseaza cheltuieli \n 1. Adauga cheltuiala \n 2. Modifica cheltuiala \n 3. Sterge cheltuiala \n "
                              "4. Filtrare cheltuiala \n 5. Sortare cheltuieli \n 6. Iesire");

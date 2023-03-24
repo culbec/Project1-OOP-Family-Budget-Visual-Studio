@@ -67,7 +67,7 @@ void test_repo() {
     assert(repoCheltuieli->cheltuieli != NULL);
 
     // verificam daca functioneaza redimensionarea
-    int capacitateOld = repoCheltuieli->capacitate;
+    unsigned int capacitateOld = repoCheltuieli->capacitate;
 
     repoRedimensionare(repoCheltuieli);
 

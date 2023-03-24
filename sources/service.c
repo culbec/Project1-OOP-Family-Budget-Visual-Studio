@@ -14,6 +14,7 @@ ServiceCheltuieli* creeazaServiceCheltuieli() {
         serviceCheltuieli->repoCheltuieli = creeazaRepo(1, 0);
         return serviceCheltuieli;
     }
+    return NULL;
 }
 
 void distrugeServiceCheltuieli(ServiceCheltuieli* serviceCheltuieli) {
